@@ -4,6 +4,7 @@ defmodule Scrawley.Scrawl do
   schema "scrawls" do
     field :text, :string
     field :metadata, :map
+    field :location, Geo.Point
 
     timestamps()
   end
@@ -13,7 +14,7 @@ defmodule Scrawley.Scrawl do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:text, :metadata])
-    |> validate_required([:text, :metadata])
+    |> cast(params, [:text, :location])       # todo: figure out how to cast metadata.
+    |> validate_required([:text, :location])
   end
 end

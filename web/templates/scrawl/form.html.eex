@@ -17,6 +17,8 @@
     <%= error_tag f, :metadata %>
   </div>
 
+  <%= hidden_input f, :location, class: "location" %>
+
   <div class="form-group">
     <%= submit "Submit", class: "btn btn-primary" %>
   </div>
