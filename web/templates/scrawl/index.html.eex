@@ -1,0 +1,28 @@
+<h2>Listing scrawls</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Text</th>
+      <th>Metadata</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for scrawl <- @scrawls do %>
+    <tr>
+      <td><%= scrawl.text %></td>
+      <td><%= scrawl.metadata %></td>
+
+      <td class="text-right">
+        <%= link "Show", to: scrawl_path(@conn, :show, scrawl), class: "btn btn-default btn-xs" %>
+        <%= link "Edit", to: scrawl_path(@conn, :edit, scrawl), class: "btn btn-default btn-xs" %>
+        <%= link "Delete", to: scrawl_path(@conn, :delete, scrawl), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<%= link "New scrawl", to: scrawl_path(@conn, :new) %>

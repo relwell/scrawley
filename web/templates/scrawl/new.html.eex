@@ -1,0 +1,6 @@
+<h2>New scrawl</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: scrawl_path(@conn, :create) %>
+
+<%= link "Back", to: scrawl_path(@conn, :index) %>

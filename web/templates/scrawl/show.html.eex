@@ -1,0 +1,18 @@
+<h2>Show scrawl</h2>
+
+<ul>
+
+  <li>
+    <strong>Text:</strong>
+    <%= @scrawl.text %>
+  </li>
+
+  <li>
+    <strong>Metadata:</strong>
+    <%= @scrawl.metadata %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: scrawl_path(@conn, :edit, @scrawl) %>
+<%= link "Back", to: scrawl_path(@conn, :index) %>
