@@ -9,6 +9,9 @@ use Mix.Config
 config :scrawley,
   ecto_repos: [Scrawley.Repo]
 
+config :scrawley, Scrawley.Repo,
+  extensions: [{Geo.PostGIS.Extension, library: Geo}]
+
 # Configures the endpoint
 config :scrawley, Scrawley.Endpoint,
   url: [host: "localhost"],

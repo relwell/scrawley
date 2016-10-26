@@ -4,8 +4,9 @@
 // To use Phoenix channels, the first step is to import Socket
 // and connect at the socket path in "lib/my_app/endpoint.ex":
 import {Socket} from "phoenix"
+var $ = require('jquery');
 
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+let socket = new Socket("/scrawl_socket", {params: {token: window.userToken}})
 
 // When you connect, you'll often need to authenticate the client.
 // For example, imagine you have an authentication plug, `MyAuth`,
@@ -54,9 +55,22 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 socket.connect()
 
 // Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("topic:subtopic", {})
+let channel = socket.channel("scrawls", {})
 channel.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
+var poll_with_location = function poll_with_location() { 
+  window.setTimeout(function() {
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        console.log(channel.push("scrawls", {type: "Point", coordinates: [position.coords.longitude, position.coords.latitude]}))
+        console.log(position.coords);
+        $('input.location').attr('value', JSON.stringify({type: "Point", coordinates: [position.coords.longitude, position.coords.latitude]}));
+      }
+    );
+    poll_with_location();
+  }, 250);
+};
+poll_with_location();
 export default socket
