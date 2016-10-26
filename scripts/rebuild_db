@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+mix ecto.drop
+mix ecto.create
+mix ecto.migrate
