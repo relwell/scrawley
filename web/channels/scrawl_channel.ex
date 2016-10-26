@@ -11,8 +11,12 @@ defmodule Scrawley.ScrawlChannel do
   end
 
   def handle_in("scrawls", point, socket) do
-    scrawls = Scrawley.Repo.all Scrawley.Scrawl.within("", Geo.JSON.decode(point), 500)  # within 500 meters
-    [ok: scrawl_json] = Enum.map(scrawls, fn(x) -> Scrawley.Scrawl.to_json(x) end)
+    scrawls = Scrawley.Scrawl.nearby_scrawls(point)
+    scrawl_json = case Enum.empty?(scrawls) do
+      true -> []
+      false -> Enum.map(scrawls, fn(x) -> Scrawley.Scrawl.to_json(x) end)
+    end
+
     {:reply, {:ok, %{scrawls: scrawl_json}}, socket}
   end
   

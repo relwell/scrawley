@@ -21,29 +21,45 @@ defmodule Scrawley.Scrawl do
 
   def within(query, point, radius_in_m) do
     {lng, lat} = point.coordinates
-    from(scrawl in query, where: fragment("ST_DWithin(?::geography, ST_SetSRID(ST_MakePoint(?, ?), ?), ?)", scrawl.location, ^lng, ^lat, ^point.srid, ^radius_in_m))
+    srid = cond do
+      is_nil(point.srid) -> 0
+      true -> point.srid
+    end
+    from(scrawl in query, where: fragment("ST_DWithin(?::geography, ST_SetSRID(ST_MakePoint(?, ?), ?), ?)", scrawl.location, ^lng, ^lat, ^srid, ^radius_in_m))
   end
 
   def order_by_nearest(query, point) do
     {lng, lat} = point.coordinates
-    from(scrawl in query, order_by: fragment("? <-> ST_SetSRID(ST_MakePoint(?,?), ?)", scrawl.location, ^lng, ^lat, ^point.srid))
+    srid = cond do
+      is_nil(point.srid) -> 0
+      true -> point.srid
+    end
+    from(scrawl in query, order_by: fragment("? <-> ST_SetSRID(ST_MakePoint(?,?), ?)", scrawl.location, ^lng, ^lat, ^srid))
   end
 
   def select_with_distance(query, point) do
     {lng, lat} = point.coordinates
+    srid = cond do
+      is_nil(point.srid) -> 0
+      true -> point.srid
+    end
     from(scrawl in query,
-         select: %{scrawl | distance: fragment("ST_Distance_Sphere(?, ST_SetSRID(ST_MakePoint(?,?), ?))", scrawl.location, ^lng, ^lat, ^point.srid)})
+         select: %{scrawl | distance: fragment("ST_Distance_Sphere(?, ST_SetSRID(ST_MakePoint(?,?), ?))", scrawl.location, ^lng, ^lat, ^srid)})
   end
   
   def to_json(struct) do
-    {latitude, longitude} = struct.location.coordinates
-    Poison.encode(
-      %{text: struct.text,
-        location: %{
-          coordinates: [latitude, longitude], 
-          srid: struct.location.srid
-        }
-      })
+    %{
+      id: struct.id,
+      text: struct.text,
+      location: Geo.JSON.encode(struct.location),
+      inserted_at: struct.inserted_at
+    }
+  end
+
+  # radius defaults to 500 meters
+  def nearby_scrawls(point, radius \\ 500) do
+    base_query = from scrawl in __MODULE__, where: scrawl.id > 0
+    Scrawley.Repo.all Scrawley.Scrawl.within(base_query, Geo.JSON.decode(point), radius)
   end
   
   
