@@ -10,8 +10,8 @@ defmodule Scrawley.ScrawlChannel do
     {:ok, socket}
   end
 
-  def handle_in("scrawls", point, socket) do
-    scrawls = Scrawley.Scrawl.nearby_scrawls(point)
+  def handle_in("scrawls", %{"last_scrawl" => last_scrawl, "point" => point}, socket) do
+    scrawls = Scrawley.Scrawl.nearby_scrawls(point, last_scrawl)
     scrawl_json = case Enum.empty?(scrawls) do
       true -> []
       false -> Enum.map(scrawls, fn(x) -> Scrawley.Scrawl.to_json(x) end)

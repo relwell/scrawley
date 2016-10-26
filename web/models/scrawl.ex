@@ -57,8 +57,8 @@ defmodule Scrawley.Scrawl do
   end
 
   # radius defaults to 500 meters
-  def nearby_scrawls(point, radius \\ 500) do
-    base_query = from scrawl in __MODULE__, where: scrawl.id > 0
+  def nearby_scrawls(point, last_scrawl \\ 0, radius \\ 500) do
+    base_query = from scrawl in __MODULE__, where: scrawl.id > ^last_scrawl
     Scrawley.Repo.all Scrawley.Scrawl.within(base_query, Geo.JSON.decode(point), radius)
   end
   
