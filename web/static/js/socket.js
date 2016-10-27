@@ -18,6 +18,10 @@ var process_scrawls = function process_scrawls(scrawls) {
   console.log(scrawls)
   console.log("Processing " + scrawls.size + " scrawls")
   scrawls.map(function(scrawl) {
+    $( "body" ).trigger({
+      type:"scrawl",
+      scrawl: scrawl
+    });
     last_scrawl = scrawl.id
   })
   console.log("Last scrawl ID is " + last_scrawl)

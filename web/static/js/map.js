@@ -4,9 +4,10 @@ var $ = require('jquery')
 // todo: figure out a zoom level i guess
 var zoom_level = 16;
 var access_token = "pk.eyJ1IjoicmVsd2VsbCIsImEiOiJjaXVycW9oY2cwMDliMnltdG8xcHBydzZ0In0.jkmHg8TYCci9O02JcrtAsQ";
+var scrawl_map;
 
 var draw_map = function draw_map(position) {
-  var scrawl_map = L.map(
+  scrawl_map = L.map(
     'scrawlmap',
   ).setView(
     [position.coords.latitude, position.coords.longitude], 
@@ -26,7 +27,18 @@ $(document).ready(function() {
   $('#scrawlmap').ready(function(){
     navigator.geolocation.getCurrentPosition(draw_map);
   });
+  $('body').on('scrawl', function(scrawl) {
+    L.geoJSON({
+      type: "Feature",
+      properties: {
+        text: scrawl.text
+      },
+      geometry: scrawl.location
+    }).addTo(scrawl_map);
+  })
 });
+
+
 
 
 

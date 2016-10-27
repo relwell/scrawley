@@ -20,7 +20,10 @@ exports.config = {
       // }
     },
     stylesheets: {
-      joinTo: "css/app.css",
+      joinTo: {
+        "css/app.css": /^web\/static\/(css|less)/,
+        "css/vendor.css": /^web\/static\/vendor/,
+      },
       order: {
         after: ["web/static/css/app.css"] // concat app.css last
       }
@@ -34,7 +37,10 @@ exports.config = {
     // This option sets where we should place non-css and non-js assets in.
     // By default, we set this to "/web/static/assets". Files in this directory
     // will be copied to `paths.public`, which is "priv/static" by default.
-    assets: /^(web\/static\/assets)/
+    assets: [
+      /^(web\/static\/assets)/,
+      /^(node_modules\/font-awesome)/
+    ]
   },
 
   // Phoenix paths configuration
@@ -42,7 +48,12 @@ exports.config = {
     // Dependencies and current project directories to watch
     watched: [
       "web/static",
-      "test/static"
+      "test/static",
+      'node_modules/font-awesome/fonts/fontawesome-webfont.eot',
+      'node_modules/font-awesome/fonts/fontawesome-webfont.svg',
+      'node_modules/font-awesome/fonts/fontawesome-webfont.ttf',
+      'node_modules/font-awesome/fonts/fontawesome-webfont.woff',
+      'node_modules/font-awesome/fonts/fontawesome-webfont.woff2'
     ],
 
     // Where to compile files to
@@ -54,6 +65,9 @@ exports.config = {
     babel: {
       // Do not use ES6 compiler in vendor code
       ignore: [/web\/static\/vendor/]
+    },
+    less: {
+      modules: true
     }
   },
 
