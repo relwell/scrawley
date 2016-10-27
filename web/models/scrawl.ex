@@ -17,8 +17,8 @@ defmodule Scrawley.Scrawl do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:text, :location])       # todo: figure out how to cast metadata.
-    |> validate_required([:text, :location])
+    |> cast(params, [:text, :location, :expiration])       # todo: figure out how to cast metadata.
+    |> validate_required([:text, :location, :expiration])
   end
 
   def within(query, point, radius_in_m) do
@@ -60,9 +60,9 @@ defmodule Scrawley.Scrawl do
 
   # radius defaults to 500 meters
   def nearby_scrawls(point, last_scrawl \\ 0, radius \\ 500) do
-    base_query = from scrawl in __MODULE__, where: scrawl.id > ^last_scrawl
+    base_query = from scrawl in __MODULE__,
+                 where: (scrawl.id > ^last_scrawl \
+                         and (is_nil(scrawl.expiration) or scrawl.expiration >= ^Ecto.DateTime.utc))
     Scrawley.Repo.all Scrawley.Scrawl.within(base_query, Geo.JSON.decode(point), radius)
   end
-  
-  
 end

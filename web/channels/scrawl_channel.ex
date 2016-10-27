@@ -20,8 +20,11 @@ defmodule Scrawley.ScrawlChannel do
     {:reply, {:ok, %{scrawls: scrawl_json}}, socket}
   end
   
-  def handle_in("scrawl", scrawl_params, _socket) do
-    Scrawley.Repo.insert Scrawley.Scrawl.changeset(%Scrawley.Scrawl{}, scrawl_params)
+  def handle_in("scrawl", scrawl_params, socket) do
+    case Scrawley.Repo.insert Scrawley.Scrawl.changeset(%Scrawley.Scrawl{}, scrawl_params) do
+      {:ok, scrawl_response} -> {:reply, {:ok, %{scrawl_id: scrawl_response.id}}, socket}
+      {:error, reason} -> {:error, reason}
+    end
   end
   
 end

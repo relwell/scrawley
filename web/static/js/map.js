@@ -1,5 +1,8 @@
 var L = require('leaflet');
-var $ = require('jquery')
+var $ = require('jquery');
+var moment = require('moment');
+
+import alerting from "./alerting.js";
 
 // todo: figure out a zoom level i guess
 var zoom_level = 16;
@@ -23,6 +26,7 @@ var draw_map = function draw_map(position) {
   scrawl_map.invalidateSize();
 };
 
+// todo: style these better
 var geojsonMarkerOptions = {
   radius: 8,
   fillColor: "#ff7800",
@@ -59,6 +63,32 @@ $(document).ready(function() {
       }).addTo(scrawl_map);
     });
   });
+  $('#scrawl-form').on('submit', function(e) {
+    e.preventDefault();
+
+    // oh jquery you jerk
+    var scrawl_input = $('#scrawl-text')[0];
+
+    if (scrawl_input.value === '' || typeof(scrawl_input.value) == 'undefined') {
+      alerting.flash_message('danger', 'Please include some text!');
+      return;
+    }
+    $('body').trigger({
+      type: "sendScrawl",
+      scrawl: {
+        text: scrawl_input.value,
+        location: {
+          type: "Point",
+          coordinates: [window.scrawler_position.coords.longitude, window.scrawler_position.coords.latitude]
+        },
+        // todo: arbitrary expiration for now!
+        expiration: moment.utc().add('30', 'seconds').format()
+      }
+    });
+
+    scrawl_input.value = '';
+    return false;
+  })
 });
 
 
