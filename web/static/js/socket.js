@@ -14,18 +14,21 @@ channel.join()
 var last_scrawl = 0;
 
 var process_scrawls = function process_scrawls(scrawls) {
-  // todo
-  console.log(scrawls)
-  console.log("Processing " + scrawls.size + " scrawls")
+  if (typeof(scrawls) === 'undefined' || scrawls.length == 0) {
+    return;
+  }
   scrawls.map(function(scrawl) {
+    if (scrawl.id <= last_scrawl) {
+      return;
+    }
     $( "body" ).trigger({
-      type:"scrawl",
+      type: "scrawl",
       scrawl: scrawl
     });
     last_scrawl = scrawl.id
-  })
+  });
   console.log("Last scrawl ID is " + last_scrawl)
-}
+};
 
 var poll_with_location = function poll_with_location() { 
   window.setTimeout(function() {
@@ -45,5 +48,5 @@ var poll_with_location = function poll_with_location() {
     poll_with_location();
   }, 500);
 };
-//poll_with_location();
+poll_with_location();
 export default socket

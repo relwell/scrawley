@@ -38,8 +38,7 @@ exports.config = {
     // By default, we set this to "/web/static/assets". Files in this directory
     // will be copied to `paths.public`, which is "priv/static" by default.
     assets: [
-      /^(web\/static\/assets)/,
-      /^(node_modules\/font-awesome)/
+      /^(web\/static\/assets)/
     ]
   },
 
@@ -49,11 +48,7 @@ exports.config = {
     watched: [
       "web/static",
       "test/static",
-      'node_modules/font-awesome/fonts/fontawesome-webfont.eot',
-      'node_modules/font-awesome/fonts/fontawesome-webfont.svg',
-      'node_modules/font-awesome/fonts/fontawesome-webfont.ttf',
-      'node_modules/font-awesome/fonts/fontawesome-webfont.woff',
-      'node_modules/font-awesome/fonts/fontawesome-webfont.woff2'
+      'node_modules/font-awesome/fonts'
     ],
 
     // Where to compile files to
@@ -66,8 +61,10 @@ exports.config = {
       // Do not use ES6 compiler in vendor code
       ignore: [/web\/static\/vendor/]
     },
-    less: {
-      modules: true
+    copycat:{
+      "fonts" : ["node_modules/font-awesome/fonts"],
+      verbose : true, //shows each file that is copied to the destination directory
+      onlyChanged: true //only copy a file if it's modified time has changed (only effective when using brunch watch)
     }
   },
 

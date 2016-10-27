@@ -23,19 +23,42 @@ var draw_map = function draw_map(position) {
   scrawl_map.invalidateSize();
 };
 
+var geojsonMarkerOptions = {
+  radius: 8,
+  fillColor: "#ff7800",
+  color: "#000",
+  weight: 1,
+  opacity: 1,
+  fillOpacity: 0.8
+};
+
+function onEachFeature(feature, layer) {
+  // does this feature have a property named popupContent?
+  if (feature.properties && feature.properties.popupContent) {
+    layer.bindPopup(feature.properties.popupContent);
+  }
+}
+
 $(document).ready(function() {
   $('#scrawlmap').ready(function(){
     navigator.geolocation.getCurrentPosition(draw_map);
+    $('body').on('scrawl', function(scrawl_event) {
+      var scrawl = scrawl_event.scrawl;
+      L.geoJSON({
+        type: "Feature",
+        properties: {
+          name: "!",
+          popupContent: scrawl.text
+        },
+        geometry: scrawl.location
+      }, {
+        onEachFeature: onEachFeature,
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, geojsonMarkerOptions);
+        }
+      }).addTo(scrawl_map);
+    });
   });
-  $('body').on('scrawl', function(scrawl) {
-    L.geoJSON({
-      type: "Feature",
-      properties: {
-        text: scrawl.text
-      },
-      geometry: scrawl.location
-    }).addTo(scrawl_map);
-  })
 });
 
 
