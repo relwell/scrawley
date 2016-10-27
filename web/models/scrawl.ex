@@ -5,6 +5,8 @@ defmodule Scrawley.Scrawl do
     field :text, :string
     field :metadata, :map
     field :location, Geo.Point
+    field :expiration, Ecto.DateTime
+    
     field :distance, :float, virtual: true
 
     timestamps()

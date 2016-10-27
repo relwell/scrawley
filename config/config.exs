@@ -12,6 +12,10 @@ config :scrawley,
 config :scrawley, Scrawley.Repo,
   extensions: [{Geo.PostGIS.Extension, library: Geo}]
 
+# https://github.com/chrismccord/phoenix_haml
+config :phoenix, :template_engines,
+  haml: PhoenixHaml.Engine
+
 # Configures the endpoint
 config :scrawley, Scrawley.Endpoint,
   url: [host: "localhost"],

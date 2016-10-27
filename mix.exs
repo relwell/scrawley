@@ -38,7 +38,8 @@ defmodule Scrawley.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
-     {:geo, "~> 1.1"}]
+     {:geo, "~> 1.1"},
+     {:phoenix_haml, "~> 0.2.1"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

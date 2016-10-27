@@ -41,5 +41,5 @@ var poll_with_location = function poll_with_location() {
     poll_with_location();
   }, 500);
 };
-poll_with_location();
+//poll_with_location();
 export default socket

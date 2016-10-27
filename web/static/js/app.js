@@ -21,3 +21,5 @@ import "phoenix_html"
 import socket from "./socket"
 
 import location from "./location"
+
+import map from "./map"
