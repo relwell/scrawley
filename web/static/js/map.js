@@ -3,6 +3,14 @@ var $ = require('jquery');
 var moment = require('moment');
 
 import alerting from "./alerting.js";
+import socket from "./socket.js";
+
+
+let channel = socket.channel("scrawls", {});
+channel.join()
+       .receive("ok", resp => { console.log("Joined successfully", resp) })
+       .receive("error", resp => { console.log("Unable to join", resp) });
+
 
 // todo: figure out a zoom level i guess
 var zoom_level = 16;
@@ -46,22 +54,6 @@ function onEachFeature(feature, layer) {
 $(document).ready(function() {
   $('#scrawlmap').ready(function(){
     navigator.geolocation.getCurrentPosition(draw_map);
-    $('body').on('scrawl', function(scrawl_event) {
-      var scrawl = scrawl_event.scrawl;
-      L.geoJSON({
-        type: "Feature",
-        properties: {
-          name: "!",
-          popupContent: scrawl.text
-        },
-        geometry: scrawl.location
-      }, {
-        onEachFeature: onEachFeature,
-        pointToLayer: function (feature, latlng) {
-          return L.circleMarker(latlng, geojsonMarkerOptions);
-        }
-      }).addTo(scrawl_map);
-    });
   });
   $('#scrawl-form').on('submit', function(e) {
     e.preventDefault();
@@ -73,9 +65,9 @@ $(document).ready(function() {
       alerting.flash_message('danger', 'Please include some text!');
       return;
     }
-    $('body').trigger({
-      type: "sendScrawl",
-      scrawl: {
+    channel.push(
+      'scrawl',
+      {
         text: scrawl_input.value,
         location: {
           type: "Point",
@@ -84,14 +76,60 @@ $(document).ready(function() {
         // todo: arbitrary expiration for now!
         expiration: moment.utc().add('30', 'seconds').format()
       }
+    ).receive("ok", resp => {
+        console.log(resp);
     });
 
+    // todo: animation
     scrawl_input.value = '';
     return false;
   })
 });
 
+var process_scrawls = function process_scrawls(scrawls) {
+  if (typeof(scrawls) === 'undefined' || scrawls.length == 0) {
+    return;
+  }
+  scrawls.map(function(scrawl) {
+    if (scrawl.id <= last_scrawl) {
+      return;
+    }
+    L.geoJSON({
+      type: "Feature",
+      properties: {
+        name: "!",
+        popupContent: scrawl.text
+      },
+      geometry: scrawl.location
+    }, {
+      onEachFeature: onEachFeature,
+      pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, geojsonMarkerOptions);
+      }
+    }).addTo(scrawl_map);
+  });
+  console.log("Last scrawl ID is " + last_scrawl);
+};
 
-
+var last_scrawl = 0;
+var poll_with_location = function poll_with_location() {
+  window.setTimeout(function() {
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        window.scrawler_position = position;
+        channel.push(
+          "scrawls",
+          {last_scrawl: last_scrawl,
+            point: {type: "Point", coordinates: [position.coords.longitude, position.coords.latitude]}
+          }
+        ).receive("ok", resp => {
+          process_scrawls(resp.scrawls);
+      });
+      }
+    );
+    poll_with_location();
+  }, 500);
+};
+poll_with_location();
 
 

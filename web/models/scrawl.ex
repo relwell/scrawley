@@ -5,7 +5,7 @@ defmodule Scrawley.Scrawl do
     field :text, :string
     field :metadata, :map
     field :location, Geo.Point
-    field :expiration, Ecto.DateTime
+    field :expiration, Timex.Ecto.DateTime
     
     field :distance, :float, virtual: true
 
@@ -54,7 +54,8 @@ defmodule Scrawley.Scrawl do
       id: struct.id,
       text: struct.text,
       location: Geo.JSON.encode(struct.location),
-      inserted_at: struct.inserted_at
+      inserted_at: struct.inserted_at,
+      expires_in: struct.expiration  # i want seconds it will expire in
     }
   end
 
@@ -64,5 +65,18 @@ defmodule Scrawley.Scrawl do
                  where: (scrawl.id > ^last_scrawl \
                          and (is_nil(scrawl.expiration) or scrawl.expiration >= ^Ecto.DateTime.utc))
     Scrawley.Repo.all Scrawley.Scrawl.within(base_query, Geo.JSON.decode(point), radius)
+  end
+
+  defmodule Factory do
+    use ExMachina.Ecto, repo: Scrawley.Repo
+
+    def build do
+      %Scrawley.Scrawl{
+        text: "This is my text",
+        location: %Geo.Point{coordinates: {36.9639657, -121.8097725}, srid: 4326},
+        expiration: DateTime.now.shift(60, :seconds),
+        inserted_at: DateTime.now
+      }
+    end
   end
 end
