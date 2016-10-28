@@ -55,7 +55,7 @@ defmodule Scrawley.Scrawl do
       text: struct.text,
       location: Geo.JSON.encode(struct.location),
       inserted_at: struct.inserted_at,
-      expires_in: struct.expiration  # i want seconds it will expire in
+      expires_in: Timex.diff(struct.inserted_at, struct.expiration, :seconds)
     }
   end
 
@@ -74,8 +74,8 @@ defmodule Scrawley.Scrawl do
       %Scrawley.Scrawl{
         text: "This is my text",
         location: %Geo.Point{coordinates: {36.9639657, -121.8097725}, srid: 4326},
-        expiration: DateTime.now.shift(60, :seconds),
-        inserted_at: DateTime.now
+        expiration: Timex.shift(Timex.now, seconds: 60),
+        inserted_at: Timex.now
       }
     end
   end
