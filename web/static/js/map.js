@@ -34,23 +34,6 @@ var draw_map = function draw_map(position) {
   scrawl_map.invalidateSize();
 };
 
-// todo: style these better
-var geojsonMarkerOptions = {
-  radius: 8,
-  fillColor: "#ff7800",
-  color: "#000",
-  weight: 1,
-  opacity: 1,
-  fillOpacity: 0.8
-};
-
-function onEachFeature(feature, layer) {
-  // does this feature have a property named popupContent?
-  if (feature.properties && feature.properties.popupContent) {
-    layer.bindPopup(feature.properties.popupContent);
-  }
-}
-
 $(document).ready(function() {
   $('#scrawlmap').ready(function(){
     navigator.geolocation.getCurrentPosition(draw_map);
@@ -86,6 +69,17 @@ $(document).ready(function() {
   })
 });
 
+// todo: style these better
+var geojsonMarkerOptions = {
+  radius: 5,
+  fillColor: "#ff7800",
+  color: "#000",
+  weight: 1,
+  opacity: 1,
+  fillOpacity: 0.8,
+  riseOnHover: true
+};
+
 var process_scrawls = function process_scrawls(scrawls) {
   if (typeof(scrawls) === 'undefined' || scrawls.length == 0) {
     return;
@@ -102,7 +96,12 @@ var process_scrawls = function process_scrawls(scrawls) {
       },
       geometry: scrawl.location
     }, {
-      onEachFeature: onEachFeature,
+      onEachFeature: function(feature, layer) {
+        // does this feature have a property named popupContent?
+        if (feature.properties && feature.properties.popupContent) {
+          layer.bindPopup(feature.properties.popupContent);
+        }
+      },
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, geojsonMarkerOptions);
       }

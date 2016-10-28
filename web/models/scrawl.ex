@@ -18,7 +18,7 @@ defmodule Scrawley.Scrawl do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:text, :location, :expiration])       # todo: figure out how to cast metadata.
-    |> validate_required([:text, :location, :expiration])
+    |> validate_required([:text, :location])
   end
 
   def within(query, point, radius_in_m) do
