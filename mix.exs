@@ -10,7 +10,11 @@ defmodule Scrawley.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      aliases: aliases(),
-     deps: deps()]
+     deps: deps(),
+     preferred_cli_env: [espec: :test],
+     spec_paths: ["spec"],
+     spec_pattern: "*_spec.exs"
+     ]
   end
 
   # Configuration for the OTP application.
@@ -42,7 +46,8 @@ defmodule Scrawley.Mixfile do
      {:phoenix_haml, "~> 0.2.1"},
      {:timex, "~> 3.0"},
      {:timex_ecto, "~> 3.0"},
-     {:ex_machina, "~> 1.0"}
+     {:ex_machina, "~> 1.0"},
+     {:espec_phoenix, "~> 0.6.1", only: :test, app: false}
      ]
   end
 

@@ -67,16 +67,4 @@ defmodule Scrawley.Scrawl do
     Scrawley.Repo.all Scrawley.Scrawl.within(base_query, Geo.JSON.decode(point), radius)
   end
 
-  defmodule Factory do
-    use ExMachina.Ecto, repo: Scrawley.Repo
-
-    def build do
-      %Scrawley.Scrawl{
-        text: "This is my text",
-        location: %Geo.Point{coordinates: {36.9639657, -121.8097725}, srid: 4326},
-        expiration: Timex.shift(Timex.now, seconds: 60),
-        inserted_at: Timex.now
-      }
-    end
-  end
 end

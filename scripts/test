@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+# uncomment to start with a fresh test db each time
+# MIX_ENV=test ./scripts/rebuild_db
+
+# actually run the tests
+mix espec
