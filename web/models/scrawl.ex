@@ -5,7 +5,7 @@ defmodule Scrawley.Scrawl do
     field :text, :string
     field :metadata, :map
     field :location, Geo.Point
-    field :expiration, Ecto.DateTime
+    field :expiration, Timex.Ecto.DateTime
     
     field :distance, :float, virtual: true
 
@@ -18,7 +18,7 @@ defmodule Scrawley.Scrawl do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:text, :location, :expiration])       # todo: figure out how to cast metadata.
-    |> validate_required([:text, :location, :expiration])
+    |> validate_required([:text, :location])
   end
 
   def within(query, point, radius_in_m) do
@@ -54,7 +54,8 @@ defmodule Scrawley.Scrawl do
       id: struct.id,
       text: struct.text,
       location: Geo.JSON.encode(struct.location),
-      inserted_at: struct.inserted_at
+      inserted_at: struct.inserted_at,
+      expires_in: Timex.diff(struct.expiration, struct.inserted_at, :milliseconds)
     }
   end
 
@@ -62,7 +63,20 @@ defmodule Scrawley.Scrawl do
   def nearby_scrawls(point, last_scrawl \\ 0, radius \\ 500) do
     base_query = from scrawl in __MODULE__,
                  where: (scrawl.id > ^last_scrawl \
-                         and (is_nil(scrawl.expiration) or scrawl.expiration >= ^Ecto.DateTime.utc))
+                         and (is_nil(scrawl.expiration) or scrawl.expiration >= ^Timex.now))
     Scrawley.Repo.all Scrawley.Scrawl.within(base_query, Geo.JSON.decode(point), radius)
+  end
+
+  defmodule Factory do
+    use ExMachina.Ecto, repo: Scrawley.Repo
+
+    def build do
+      %Scrawley.Scrawl{
+        text: "This is my text",
+        location: %Geo.Point{coordinates: {36.9639657, -121.8097725}, srid: 4326},
+        expiration: Timex.shift(Timex.now, seconds: 60),
+        inserted_at: Timex.now
+      }
+    end
   end
 end

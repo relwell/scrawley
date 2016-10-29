@@ -2,6 +2,12 @@
 
 body {
   background-image: url('../images/brickwall.png');
+  font-family: 'Caveat', cursive;
+}
+
+.leaflet-popup-content {
+  font-family: 'Caveat', cursive;
+  font-size: 18px;
 }
 
 #scrawl-text {
@@ -20,4 +26,34 @@ body {
 
 .close-alert {
   cursor: pointer;
+}
+
+#scrawl-header {
+  h2 {
+    margin-left: 15px;
+    margin-top: 0;
+  }
+  p {
+    font-size: 24px;
+    margin-right: 15px;
+  }
+}
+
+div#insert {
+  input, button {
+    font-size: 24px;
+  }
+  
+  input[type=text] {
+    height: 48px;
+  }
+  
+  #scrawl-submit {
+    text-align: right;
+    
+    b {
+      margin-left: 20px;
+    }
+  }
+
 }
