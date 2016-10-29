@@ -53,11 +53,9 @@ var submitScrawl = function submitScrawl(e) {
         coordinates: [window.scrawler_position.coords.longitude, window.scrawler_position.coords.latitude]
       },
       // todo: arbitrary expiration for now!
-      expiration: moment.utc().add('30', 'seconds').format()
+      expiration: moment.utc().add('60', 'seconds').format()
     }
-  ).receive("ok", resp => {
-      console.log(resp);
-  });
+  ).receive("ok", resp => {});
 
   // todo: animation
   scrawl_input.value = '';
@@ -90,7 +88,7 @@ var process_scrawls = function process_scrawls(scrawls) {
     if (scrawl.id <= last_scrawl) {
       return;
     }
-    L.geoJSON({
+    var marker = L.geoJSON({
       type: "Feature",
       properties: {
         name: "!",
@@ -107,7 +105,20 @@ var process_scrawls = function process_scrawls(scrawls) {
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, geojsonMarkerOptions);
       }
-    }).addTo(scrawl_map);
+    });
+    
+    console.log(marker);
+    
+    last_scrawl = scrawl.id;
+    marker.addTo(scrawl_map);
+    
+    console.log(scrawl.expires_in);
+    if ($.isNumeric(scrawl.expires_in)) {
+      setTimeout(function(){
+          scrawl_map.removeLayer(marker); 
+        }, scrawl.expires_in);
+    }
+    
   });
   console.log("Last scrawl ID is " + last_scrawl);
 };

@@ -55,7 +55,7 @@ defmodule Scrawley.Scrawl do
       text: struct.text,
       location: Geo.JSON.encode(struct.location),
       inserted_at: struct.inserted_at,
-      expires_in: Timex.diff(struct.inserted_at, struct.expiration, :seconds)
+      expires_in: Timex.diff(struct.expiration, struct.inserted_at, :milliseconds)
     }
   end
 
@@ -63,7 +63,7 @@ defmodule Scrawley.Scrawl do
   def nearby_scrawls(point, last_scrawl \\ 0, radius \\ 500) do
     base_query = from scrawl in __MODULE__,
                  where: (scrawl.id > ^last_scrawl \
-                         and (is_nil(scrawl.expiration) or scrawl.expiration >= ^Ecto.DateTime.utc))
+                         and (is_nil(scrawl.expiration) or scrawl.expiration >= ^Timex.now))
     Scrawley.Repo.all Scrawley.Scrawl.within(base_query, Geo.JSON.decode(point), radius)
   end
 

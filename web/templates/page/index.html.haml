@@ -1,7 +1,8 @@
-%h2
-  Scrawley
-%p
-  Fast, ephemeral, location-based messaging.
+%div.row#scrawl-header
+  %h2.pull-left
+    Scrawley
+  %p.pull-right
+    Fast, ephemeral, location-based messaging.
 
 %div#scrawlmap
 
@@ -10,5 +11,5 @@
     %form.form-inline#scrawl-form
       %input#scrawl-text.pull-left.form-control{name: "text", type: "text", placeholder: "scrawl something"}
       %button#scrawl-submit.pull-right.btn.btn-primary{type: "submit"}
-        %b.fa.fa-pencil
         Scrawl
+        %b.fa.fa-pencil
