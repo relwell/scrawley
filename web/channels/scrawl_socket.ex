@@ -1,7 +1,7 @@
 defmodule Scrawley.ScrawlSocket do
   use Phoenix.Socket
   
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport :websocket, Phoenix.Transports.WebSocket, timeout: 45_000
   
   # We let anybody connect because Scrawley is anon af
   def connect(_params, socket) do
