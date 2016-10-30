@@ -4,19 +4,20 @@
 
 * Easily, anonymously associate short text with geospatial data
 * Make it easy to get notifications about text you're interested when you
-  get within the vicinity of a tag or phrase you're interested in
+  get within the vicinity of a tag or phrase you have opted into
 
 ## PostGis
 
 We're using PostGis for easy spatial integration with PostGres.
+PostGis is enabled when building the database.
 
-Assuming you have postgres on your machine:
+## Leaflet
 
-```bash
-brew install postgis
-psql -d yourdatabase -c "CREATE EXTENSION postgis;"
-psql -d yourdatabase -c "CREATE EXTENSION postgis_topology;"
-```
+We use [Leaflet](leafletjs.com) for handling mapping. It's not bad, check it out.
+
+## Heroku
+
+Deployed with Heroku, yo.
 
 ## Getting Started
 
