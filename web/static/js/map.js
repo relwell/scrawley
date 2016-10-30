@@ -17,7 +17,7 @@ var zoom_level = 16;
 var access_token = "pk.eyJ1IjoicmVsd2VsbCIsImEiOiJjaXVycW9oY2cwMDliMnltdG8xcHBydzZ0In0.jkmHg8TYCci9O02JcrtAsQ";
 var scrawl_map;
 
-var draw_map = function draw_map(position) {
+var draw_map = (position) => {
   scrawl_map = L.map(
     'scrawlmap',
   ).setView(
@@ -34,7 +34,7 @@ var draw_map = function draw_map(position) {
   scrawl_map.invalidateSize();
 };
 
-var submitScrawl = function submitScrawl(e) {
+var submitScrawl = (e) => {
   e.preventDefault();
 
   // oh jquery you jerk
@@ -63,19 +63,17 @@ var submitScrawl = function submitScrawl(e) {
 }
 
 $(document).ready(function() {
-  $('#scrawlmap').ready(function(){
-    navigator.geolocation.getCurrentPosition(draw_map);
-  });
+  $('#scrawlmap').ready(() => { navigator.geolocation.getCurrentPosition(draw_map); });
   $('#scrawl-form').on('submit', submitScrawl)
 });
 
 // todo: style these better
 var geojsonMarkerOptions = {
-  radius: 5,
+  radius: 8,
   fillColor: "#ff7800",
   color: "#000",
   weight: 1,
-  opacity: 1,
+  opacity: 0.9,
   fillOpacity: 0.8,
   riseOnHover: true
 };
@@ -96,7 +94,7 @@ var process_scrawls = function process_scrawls(scrawls) {
       },
       geometry: scrawl.location
     }, {
-      onEachFeature: function(feature, layer) {
+      onEachFeature: (feature, layer) => {
         // does this feature have a property named popupContent?
         if (feature.properties && feature.properties.popupContent) {
           layer.bindPopup(feature.properties.popupContent);
@@ -112,22 +110,18 @@ var process_scrawls = function process_scrawls(scrawls) {
     last_scrawl = scrawl.id;
     marker.addTo(scrawl_map);
     
-    console.log(scrawl.expires_in);
     if ($.isNumeric(scrawl.expires_in)) {
-      setTimeout(function(){
-          scrawl_map.removeLayer(marker); 
-        }, scrawl.expires_in);
+      setTimeout(() => { scrawl_map.removeLayer(marker); }, scrawl.expires_in);
     }
-    
   });
   console.log("Last scrawl ID is " + last_scrawl);
 };
 
 var last_scrawl = 0;
 var poll_with_location = function poll_with_location() {
-  window.setTimeout(function() {
+  window.setTimeout(() => {
     navigator.geolocation.getCurrentPosition(
-      function(position) {
+      position => {
         window.scrawler_position = position;
         channel.push(
           "scrawls",

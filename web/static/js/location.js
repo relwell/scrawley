@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-$('document').ready(function() {
+$('document').ready(() => {
   navigator.geolocation.getCurrentPosition(
     function(position) {
       $('input.location').attr(
