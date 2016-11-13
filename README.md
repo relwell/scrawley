@@ -19,6 +19,10 @@ We use [Leaflet](leafletjs.com) for handling mapping. It's not bad, check it out
 
 Deployed with Heroku, yo.
 
+## Todo
+
+* Implement Presence to make it easier to broadcast messages to the right users
+
 ## Getting Started
 
 To start your Phoenix app:

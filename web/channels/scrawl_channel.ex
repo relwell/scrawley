@@ -5,6 +5,10 @@ defmodule Scrawley.ScrawlChannel do
     {:ok, socket}
   end
   
+  def join("scrawl", _message, socket) do
+    {:ok, socket}
+  end
+  
   def join("scrawls:" <> _some_tag, _message, socket) do
     # todo: support subscribing to different tags
     {:ok, socket}
@@ -20,11 +24,33 @@ defmodule Scrawley.ScrawlChannel do
     {:reply, {:ok, %{scrawls: scrawl_json}}, socket}
   end
   
+  def handle_in("scrawls", scrawl_params, socket) do
+    write_scrawl(scrawl_params, socket)
+  end
+  
   def handle_in("scrawl", scrawl_params, socket) do
-    case Scrawley.Repo.insert Scrawley.Scrawl.changeset(%Scrawley.Scrawl{}, scrawl_params) do
-      {:ok, scrawl_response} -> {:reply, {:ok, %{scrawl_id: scrawl_response.id}}, socket}
+    write_scrawl(scrawl_params, socket)
+  end
+  
+  def write_scrawl(scrawl_params, socket) do
+    IO.puts inspect(scrawl_params)
+    scrawl_response = Scrawley.Repo.insert Scrawley.Scrawl.changeset(%Scrawley.Scrawl{}, scrawl_params)
+    case scrawl_response do
+      {:ok, scrawl_response} -> reply_and_broadcast(scrawl_response, socket)
       {:error, reason} -> {:error, reason}
     end
+  end
+
+  def reply_and_broadcast(%Scrawley.Scrawl{}=scrawl, socket) do
+    # todo
+    #send(self, {:after_scrawl, scrawl})
+    {:reply, {:ok, %{scrawl_id: scrawl.id}}, socket}
+  end
+  
+  def handle_info({:after_scrawl, scrawl}, socket) do
+    broadcast! socket, "scrawls", scrawl
+    push socket, "join", %{status: "connected"}
+    {:noreply, socket}
   end
   
 end
