@@ -33,7 +33,6 @@ defmodule Scrawley.ScrawlChannel do
   end
   
   def write_scrawl(scrawl_params, socket) do
-    IO.puts inspect(scrawl_params)
     scrawl_response = Scrawley.Repo.insert Scrawley.Scrawl.changeset(%Scrawley.Scrawl{}, scrawl_params)
     case scrawl_response do
       {:ok, scrawl_response} -> reply_and_broadcast(scrawl_response, socket)
