@@ -55,7 +55,10 @@ defmodule Scrawley.Scrawl do
       text: struct.text,
       location: Geo.JSON.encode(struct.location),
       inserted_at: struct.inserted_at,
-      expires_in: Timex.diff(struct.expiration, struct.inserted_at, :milliseconds)
+      expires_in: cond do
+        (is_nil(struct.expiration) || is_nil(struct.inserted_at)) -> nil
+        true -> Timex.diff(struct.expiration, struct.inserted_at, :milliseconds)
+      end
     }
   end
 
