@@ -6,7 +6,7 @@ defmodule Scrawley.Scrawl do
     field :metadata, :map
     field :location, Geo.Point
     field :expiration, Timex.Ecto.DateTime
-    
+
     field :distance, :float, virtual: true
 
     timestamps()
@@ -48,7 +48,7 @@ defmodule Scrawley.Scrawl do
     from(scrawl in query,
          select: %{scrawl | distance: fragment("ST_Distance_Sphere(?, ST_SetSRID(ST_MakePoint(?,?), ?))", scrawl.location, ^lng, ^lat, ^srid)})
   end
-  
+
   def to_json(struct) do
     %{
       id: struct.id,
@@ -62,8 +62,8 @@ defmodule Scrawley.Scrawl do
     }
   end
 
-  # radius defaults to 500 meters
-  def nearby_scrawls(point, last_scrawl \\ 0, radius \\ 500) do
+  # radius defaults to 10 kilometers
+  def nearby_scrawls(point, last_scrawl \\ 0, radius \\ 10000) do
     base_query = from scrawl in __MODULE__,
                  where: (scrawl.id > ^last_scrawl \
                          and (is_nil(scrawl.expiration) or scrawl.expiration >= ^Timex.now))
